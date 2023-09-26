@@ -36,7 +36,7 @@ describe('calculateTax Function', () => {
         [1234567, 385587.65],
     ];
     it.each(incomeAndTax)('when the income is %d returns tax as %d', (income, taxAmount) => {
-        expect(calculateTaxByIncomeAndBrackets(income, taxBracket_2022.tax_brackets).toFixed(2)).toBe(taxAmount);
+        expect(calculateTaxByIncomeAndBrackets(income, taxBracket_2022.tax_brackets).toFixed(2)).toBe(taxAmount.toFixed(2));
     })
 
 });
