@@ -4,6 +4,7 @@ import TaxContext from '@/context/taxContext';
 import { TaxBracket } from '@/types';
 import { getCalculateTaxByYearUrl } from '@/utils/urlGenerator';
 import { TAX_YEARS } from '@/utils/constants';
+import { calculateTaxByIncomeAndBrackets } from '@/utils/calculateTax';
 import './TaxForm.scss'
 
 function TaxForm() {
@@ -19,18 +20,12 @@ function TaxForm() {
         }
         if (taxBrackets?.length > 0 && income && !Number.isNaN(income)) {
             const incomeVal = Number(income);
-            const selectedBracket = taxBrackets.find((bracket) => {
-                if (incomeVal >= bracket.min && (!bracket.max || incomeVal < bracket.max)) {
-                    return bracket
-                }
+            const tax = calculateTaxByIncomeAndBrackets(incomeVal, taxBrackets);
+            taxContext.updateTaxContextValues({
+                ...taxContext.values,
+                taxDueAmount: formatCurrency(tax),
+                showTax: true
             });
-            if (selectedBracket) {
-                taxContext.updateTaxContextValues({
-                    ...taxContext.values,
-                    taxDueAmount: formatCurrency(selectedBracket.rate * incomeVal),
-                    showTax: true
-                });
-            }
         }
     }
 
@@ -49,7 +44,7 @@ function TaxForm() {
                 ...taxContext.values,
                 isError: false
             });
-            handleClick();
+            getTaxBrackets();
         } else {
             taxContext.updateTaxContextValues({
                 ...taxContext.values,
@@ -59,7 +54,7 @@ function TaxForm() {
         }
     }
 
-    const handleClick = () => { 
+    const getTaxBrackets = () => { 
         let updatedTaxContextValues = {
             ...taxContext.values,
             isError: false,
@@ -95,7 +90,7 @@ function TaxForm() {
         <form className="tax-form" onSubmit={handleSubmit} data-testid="tax-form-testid">
             <div className="tax-form__field">
                 <label className="tax-form__field__label" htmlFor="income">Income</label>
-                <input className="tax-form__field__input" id="income" aria-label="income" value={income} type="number" min="1" max="50000000" onChange={e => setIncome(e.target.value)} />
+                <input className="tax-form__field__input" id="income" aria-label="income" value={income} type="number" min="0" max="50000000" onChange={e => setIncome(e.target.value)} />
             </div>
             <div className="tax-form__field">
                 <label className="tax-form__field__label" htmlFor="year">Year</label>
