@@ -41,7 +41,7 @@ const setup = () => {
 
 describe('TaxForm component', () => {
   it('renders the form', () => {
-     setup();
+    setup();
     expect(screen.getByTestId('tax-form-testid')).toBeTruthy();
   })
   it('has the field - Income and Year that accepts only numbers', () => {
